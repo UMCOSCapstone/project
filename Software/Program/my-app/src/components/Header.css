@@ -1,0 +1,46 @@
+.Header {
+  background-color: blue;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+}
+
+.HeaderRightContainer {
+  margin-top: auto;
+  margin-bottom: auto;
+  display: flex;
+  justify-content: space-between;
+  padding: 15px;
+}
+
+.RightHeaderItem {
+  padding-right: 15px;
+}
+
+.HeaderLeftContainer {
+  padding: 15px;
+}
+
+.link {
+  color: white;
+}
+
+.active{
+  border: 1px solid black;
+}
+
+a:link
+{
+   color: white;
+   text-decoration: none;
+}
+a:visited
+{
+   color: white;
+   text-decoration: none;
+}
+a:hover
+{
+   color: grey;
+   text-decoration: none;
+}
