@@ -14,13 +14,24 @@ def ACS(sensor):
         bitEnd = byteString.find(b'\xff\x00\xff\x00')#checks for beginning of next frame
         if not (bitEnd == -1):
             try:
+
+                sensorName = files[i]
+
                 #decodedFile.write(str(newACS.unpack_frame(b'\xff\x00\xff\x00' + byteString[0:bitEnd]))+ "\n")
                 #file.write(byteString.hex())#writes incoming data to appropriate file
-                #dm.sendData(files[i], byteString.hex())
+                # dm.addData(files[i], str(newACS.unpack_frame(b'\xff\x00\xff\x00' + byteString[0:bitEnd])) + "\n", "txt")
+                dm.addData(sensorName + "_bin", byteString.hex(), "bin")
+                dm.addData(sensorName, str(newACS.unpack_frame(b'\xff\x00\xff\x00' + byteString[0:bitEnd]))+ "\n", "txt")
+                if(dm.status == 1):
+                    thread = Thread(target = dm.sendData, args = {sensorName + "_bin", "bin"})
+                    thread.start()
+                    thread = Thread(target = dm.sendData, args = {sensorName, "txt"})
+                    thread.start()
                 print("Writing Data")
             except:
                 print("something went wrong")
             byteString = byteString[bitEnd + 4:]#deletes old frame
+
 
 def SensorInput(sensor):
     while(1):
@@ -64,4 +75,3 @@ for i in range(count):
     else:
         thread = Thread(target = SensorInput, args = {ser[i]})
         thread.start()
-        

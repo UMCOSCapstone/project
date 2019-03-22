@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import Header from './components/Header.js'
 import Overview from './pages/Overview.js'
-import Process from './pages/Process.js'
-import Status from './pages/Status.js'
+// import Process from './pages/Process.js'
+// import Status from './pages/Status.js'
 import Graph from './pages/Graph.js'
 import Helmet from 'react-helmet'
 import { BrowserRouter, Route, Redirect } from 'react-router-dom';
@@ -47,8 +47,6 @@ class App extends Component {
               <title>Aqua</title>
             </Helmet>
             <Route exact path="/" component={Overview} />
-            <Route exact path="/process" component={Process} />
-            <Route exact path="/status" component={Status} />
             <Route exact path="/graph" component={Graph} />
           </div>
       </BrowserRouter>
