@@ -1,0 +1,12 @@
+.graph{
+	float: left;
+	display: inline;
+	margin: 10px;
+}
+
+
+.side{
+	float: right;
+	display: inline;
+	margin: 10px;
+}
