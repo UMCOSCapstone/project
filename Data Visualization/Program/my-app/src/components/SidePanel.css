@@ -1,0 +1,26 @@
+
+.upSide{
+	height: 120px;
+	width: 240px;
+	text-align: left; 
+	background-color: #e5e7ea;
+	border: 1.5px solid #cfd2d6;
+	font-family: Arial, serif;
+	font-size: 15px;
+	padding: 10px;
+	text-align: left;
+}
+
+.downSide {
+    background-color: #e5e7ea;
+    border: 1.5px solid #cfd2d6;
+    font-family: Arial, serif;
+    font-size: 15px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    padding: 10px;
+    float: rigt;
+    text-align: left;
+    height: 300px;
+    width: 240px;
+}
