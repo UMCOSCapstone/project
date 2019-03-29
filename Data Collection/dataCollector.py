@@ -4,7 +4,22 @@ from pyACS import *
 import dataManager as dm
 from threading import Thread
 
+import socket;
+
 def ACS(sensor):
+    connected = False
+    while(not connected):
+        print("test")
+        try:        
+            host = socket.gethostname()  # as both code is running on same pc
+            port = 5000  # socket server port number
+
+            client_socket = socket.socket()  # instantiate
+            client_socket.connect((host, port))  # connect to the server
+            connected = True
+        except:
+            print("connection failed, trying again in 5 seconds")
+            time.sleep(5)
     #file = open(files[i] + "Bytes.txt", "a")
     #decodedFile = open(files[i] + ".txt", "a")
     newACS = acs.ACS("acs301.dev")
@@ -18,13 +33,29 @@ def ACS(sensor):
                 #file.write(byteString.hex())#writes incoming data to appropriate file
                 #dm.sendData(files[i], byteString.hex())
                 print("Writing Data")
+            
             except:
                 print("something went wrong")
+            client_socket.send(byteString)
             byteString = byteString[bitEnd + 4:]#deletes old frame
 
 def SensorInput(sensor):
+    connected = False
+    while(not connected):
+        print("test")
+        try:        
+            host = socket.gethostname()  # as both code is running on same pc
+            port = 5000  # socket server port number
+
+            client_socket = socket.socket()  # instantiate
+            client_socket.connect((host, port))  # connect to the server
+            connected = True
+        except:
+            print("connection failed, trying again in 5 seconds")
+            time.sleep(5)
     while(1):
         print(test)
+        client_socket.send(byteString.encode())
         #dm.sendData(files[i], byteString.hex())
 
 
@@ -32,6 +63,8 @@ config = open("config.text", "r")
 ser = []#stores all serial ports
 files = []#stores each sensor's file
 count = 0#counts how many sensors there are
+        
+            
 sensorType = []
 
 
