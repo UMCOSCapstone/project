@@ -1,0 +1,38 @@
+* {
+  margin: 0px;
+  padding: 0px;
+  border: none;
+}
+
+QPushButton {
+  border: none;
+  margin: 10px;
+  background-color: #4781c4;
+  padding: 5px;
+  border-radius: 5px;
+  color: white;
+}
+
+QLineEdit {
+  padding: 5px;
+}
+
+ContainerWindow {
+  margin: 0px;
+  padding: 0px;
+}
+
+TabBar QPushButton{
+  color: white;
+}
+
+QScrollArea QPushButton{
+  text-align: left;
+  margin-top: 0px;
+  margin-bottom: 0px;
+  margin-right: 0px;
+}
+
+TabBar {
+  background-color: #4781c4;
+}
