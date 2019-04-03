@@ -16,14 +16,32 @@ class Overview extends Component {
           to: "/graph",
           label: "item 2"
         },
+      ],
+      sensors: [
       ]
     }
   }
 
+  componentDidMount(){
+    fetch('http://localhost:5000/getSensors')
+    .then(response => response.json())
+    .then(data => this.setState({sensors: data.sensors}))
+  }
+
   render() {
+
+    var items = []
+
+    for (var i = 0; i < this.state.sensors.length; i++) {
+      console.log(i)
+      var sensor = this.state.sensors[i]
+      items.push({to: "/graph" + "/" + sensor.serial, label: sensor.name})
+    }
+
+
     return (
       <div>
-        <List items={this.state.items}/>
+        <List items={items}/>
       </div>
     );
   }
