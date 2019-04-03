@@ -22,7 +22,7 @@ class Graph extends Component {
 componentDidMount() {
     const socket = socketIOClient("http://localhost:5000/test");
     socket.on("newnumber", data => this.addDataPoint(data.number));
-    socket.on("newnum", data2 => this.addDataPoint(data.number1));
+    socket.on("newnum", data2 => this.addDataPoint(data2.number1));
   }
 
 
