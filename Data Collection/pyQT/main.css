@@ -13,6 +13,7 @@ QPushButton {
   color: white;
 }
 
+
 QLineEdit {
   padding: 5px;
 }
@@ -35,4 +36,16 @@ QScrollArea QPushButton{
 
 TabBar {
   background-color: #4781c4;
+}
+
+TabBar QPushButton:hover {
+  color: black;
+}
+
+TabBar QPushButton[underline=true] {
+  border: 1px solid red;
+}
+
+TabBar QPushButton[underline=false] {
+  border: none;
 }

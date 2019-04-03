@@ -1,6 +1,8 @@
 from app import app
 import os
 from flask import request, jsonify
+import configparser
+import json
 
 @app.route('/send', methods=['POST'])
 def send():
@@ -28,3 +30,26 @@ def send():
 
 
     return "{success: true}"
+
+@app.route('/updateSensors', methods=['POST'])
+def updateSensors():
+
+    jsonSensors = request.json["sensors"]
+
+    # print(jsonSensors)
+
+    config = configparser.ConfigParser()
+    config.set('DEFAULT', 'sensors', json.dumps(jsonSensors, indent=4))
+    print(config.write(open("config.ini", "w")))
+
+    return json.dumps({"error": False})
+
+
+
+@app.route('/getSensors', methods=['GET'])
+def getSensors():
+
+    config = configparser.ConfigParser()
+    config.read('config.ini')
+    jsonSensors = json.loads(config['DEFAULT']['sensors'])
+    return json.dumps({"error": False, "sensors": jsonSensors})

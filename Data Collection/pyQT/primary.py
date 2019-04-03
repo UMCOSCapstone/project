@@ -70,6 +70,7 @@ class TabBar(QDialog):
 
     def uiSetup(self):
         self.tabItems = ["Instruments", "Overview", "Options"]
+        self.tabButtons = []
 
         layout = QHBoxLayout()
 
@@ -78,6 +79,7 @@ class TabBar(QDialog):
         for tabItem in self.tabItems:
 
             tabButton = QPushButton(tabItem)
+            self.tabButtons.append(tabButton)
 
             tabButton.clicked.connect(partial(self.tabButtonClicked, tabItem))
 
@@ -93,6 +95,12 @@ class TabBar(QDialog):
 
     def tabButtonClicked(self, item):
         self.tabController(item)
+        self.highlightItem(item)
+
+    def highlightItem(self, item):
+        for i in range(len(self.tabButtons)):
+            self.tabButtons[i].setProperty("underline", "true")
+            self.tabButtons[i].update()
 
 
 class ContentMenu(QDialog):
