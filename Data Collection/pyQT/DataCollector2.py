@@ -2,9 +2,9 @@ import SensorManager as Sm
 import serial
 from threading import Thread
 from pyACS import *
+import time
 import dataManager as dm
 import socket
-import time
 
 sensorManager = Sm.SensorManager()
 
@@ -75,22 +75,26 @@ class DataCollector():
         for sensor in self.sensors:
             self.stop(sensor)
 
-    def ACS(self, serialPort, sensor):
-        
-        connected = False
-        while(not connected):
-            print("test")
-            try:        
-                host = socket.gethostname()  # as both code is running on same pc
-                port = 5000  # socket server port number
 
-                client_socket = socket.socket()  # instantiate
-                client_socket.connect((host, port))  # connect to the server
-                connected = True
-            except:
-                print("connection failed, trying again in 5 seconds")
-                time.sleep(5)
-            
+    def ACS(self, serialPort, sensor):
+
+        # connected = False
+        # while(not connected):
+        #     print("test")
+        #     try:
+        #         # host = socket.gethostname()  # as both code is running on same pc
+        #         # port = 5000  # socket server port number
+        #         #
+        #         # client_socket = socket.socket()  # instantiate
+        #         # client_socket.connect((host, port))  # connect to the server
+        #
+        #         sio.emit('my event', {'data': 'foobar'})
+        #
+        #         connected = True
+        #     except:
+        #         print("connection failed, trying again in 5 seconds")
+        #         time.sleep(5)
+
         #file = open(files[i] + "Bytes.txt", "a")
         #decodedFile = open(files[i] + ".txt", "a")
         newACS = acs.ACS("acs301.dev")
@@ -101,15 +105,17 @@ class DataCollector():
             if not (bitEnd == -1):
                 try:
 
-                    dm.addData(sensor.name + "_bin", byteString.hex(), "bin")
-                    dm.addData(sensor.name, str(newACS.unpack_frame(b'\xff\x00\xff\x00' + byteString[0:bitEnd]))+ "\n", "txt")
-                    if(dm.status == 1):
+                    # print(str(newACS.unpack_frame(b'\xff\x00\xff\x00' + byteString[0:bitEnd]))+ "\n")
+                    # dm.addData(sensor.name + "_bin", byteString.hex(), "bin")
+                    # print(newACS.unpack_frame(b'\xff\x00\xff\x00' + byteString[0:bitEnd]).c_ref[0])
+                    dm.addData(sensor, newACS.unpack_frame(b'\xff\x00\xff\x00' + byteString[0:bitEnd]).c_ref[0], "txt")
+                    # if(dm.status == 1):
                         # thread = Thread(target = dm.sendData, args = {sensorName + "_bin", "bin"})
                         # thread.start()
                         # thread = Thread(target = dm.sendData, args = {sensorName, "txt"})
                         # thread.start()
-                        client_socket.send(b'\xff\x00\xff\x00' + byteString[0:bitEnd])
-                        print("Writing Data For: ", str(sensor.serial))
+                        # client_socket.send(b'\xff\x00\xff\x00' + byteString[0:bitEnd])
+                    print("Writing Data For: ", str(sensor.serial))
                 except:
                     print("something went wrong")
                 byteString = byteString[bitEnd + 4:]#deletes old frame

@@ -23,70 +23,61 @@ componentDidMount() {
 
     var sensorSerial = this.props.match.params.sensorId
 
-    const socket = socketIOClient("http://localhost:5000/test");
-    socket.on("newnumber", data => this.addDataPoint(data.number));
+    const socket = socketIOClient("http://localhost:5001/test");
+    socket.on("newnumber", data => this.addDataPoint(data));
   }
 
 
   addDataPoint(data){
-    var newData = this.state.data.slice(0)
+    if(data.sensorSerial == this.props.match.params.sensorId){
+      var newData = this.state.data.slice(0)
 
-    newData.push(data)
+      console.log(new Date(data.dateTime.split(' ').join('T')))
+      //console.log(data.dateTime)
+      newData.push([new Date(data.dateTime.split(' ').join('T')), data.number])
 
-    if(newData.length > 50){
-      newData.shift()
+      // if(newData.length > 50){
+      //   newData.shift()
+      // }
+
+      this.setState({
+        data: newData
+      })
     }
-
-    this.setState({
-      data: newData
-    })
   }
 
 
   render() {
-    const {data} = this.state;
+    // const {data} = this.state;
+
+    // console.log(new Date("2019-04-04T10:55:08.841287" + Z))
+
+    const plotOptions = {
+      series: {
+        pointStart: new Date("2019-04-04T10:55:08.841287Z")
+      }
+    }
 
     return (
       <div className="graph">
 
 
-        <HighchartsChart>
+        <HighchartsChart plotOptions={plotOptions}>
           <Chart />
 
-          <Title>Two Series</Title>
+          <Title>Sensor Data</Title>
 
           <Legend layout="vertical" align="right" verticalAlign="middle" >
             <Legend.Title>Legend</Legend.Title>
           </Legend>
 
           <XAxis type="datetime">
-            <XAxis.Title>X-axis</XAxis.Title>
+            <XAxis.Title>Time</XAxis.Title>
           </XAxis>
 
           <YAxis>
             <YAxis.Title>Y-axis</YAxis.Title>
             <LineSeries name="Channel 1" data={this.state.data}/>
-          </YAxis>
-        </HighchartsChart>
-
-        <HighchartsChart>
-          <Chart />
-
-
-
-          <Title>Specific</Title>
-
-          <Legend layout="vertical" align="right" verticalAlign="middle" >
-            <Legend.Title>Legend</Legend.Title>
-          </Legend>
-
-          <XAxis type="datetime">
-            <XAxis.Title>X-axis</XAxis.Title>
-          </XAxis>
-
-          <YAxis>
-            <YAxis.Title>Y-axis</YAxis.Title>
- //           <LineSeries name="Channel 2" data={this.state.data2}/>
           </YAxis>
         </HighchartsChart>
       </div>
