@@ -45,6 +45,9 @@ class DataCollector():
         if(sensor.name == "ACS"):
             thread = Thread(target = self.ACS, kwargs = dict(serialPort=serialPort, sensor=sensor))
             thread.start()
+        elif(sensor.name == "BB3"):
+            thread = Thread(target = self.BB3, kwargs = dict(serialPort=serialPort, sensor=sensor))
+            thread.start()
         else:
             print("Sensor not available")
 
@@ -119,3 +122,41 @@ class DataCollector():
                 except:
                     print("something went wrong")
                 byteString = byteString[bitEnd + 4:]#deletes old frame
+
+    def BB3(self, serialPort, sensor):
+
+        # connected = False
+        # while(not connected):
+        #     print("test")
+        #     try:
+        #         # host = socket.gethostname()  # as both code is running on same pc
+        #         # port = 5000  # socket server port number
+        #         #
+        #         # client_socket = socket.socket()  # instantiate
+        #         # client_socket.connect((host, port))  # connect to the server
+        #
+        #         sio.emit('my event', {'data': 'foobar'})
+        #
+        #         connected = True
+        #     except:
+        #         print("connection failed, trying again in 5 seconds")
+        #         time.sleep(5)
+
+        #file = open(files[i] + "Bytes.txt", "a")
+        #decodedFile = open(files[i] + ".txt", "a")
+        while(self.flags[sensor.serial]):
+            byteString = serialPort.readline()#read incoming bytes
+            #try:
+                # print(str(newACS.unpack_frame(b'\xff\x00\xff\x00' + byteString[0:bitEnd]))+ "\n")
+                # dm.addData(sensor.name + "_bin", byteString.hex(), "bin")
+                # print(newACS.unpack_frame(b'\xff\x00\xff\x00' + byteString[0:bitEnd]).c_ref[0])
+            dm.addData(sensor, byteString, "txt")
+                # if(dm.status == 1):
+                    # thread = Thread(target = dm.sendData, args = {sensorName + "_bin", "bin"})
+                    # thread.start()
+                    # thread = Thread(target = dm.sendData, args = {sensorName, "txt"})
+                    # thread.start()
+                    # client_socket.send(b'\xff\x00\xff\x00' + byteString[0:bitEnd])
+            print("Writing Data For: ", str(sensor.serial))
+            #except:
+            #    print("something went wrong")
