@@ -145,18 +145,21 @@ class DataCollector():
         #file = open(files[i] + "Bytes.txt", "a")
         #decodedFile = open(files[i] + ".txt", "a")
         while(self.flags[sensor.serial]):
-            byteString = serialPort.readline()#read incoming bytes
-            #try:
+            byteString = str(serialPort.readline())[1:-5].split("\\t")[2:]#read incoming bytes
+            print(byteString)
+            #for i in byteString:
+            #    print(i + "test,")
+            try:
                 # print(str(newACS.unpack_frame(b'\xff\x00\xff\x00' + byteString[0:bitEnd]))+ "\n")
                 # dm.addData(sensor.name + "_bin", byteString.hex(), "bin")
                 # print(newACS.unpack_frame(b'\xff\x00\xff\x00' + byteString[0:bitEnd]).c_ref[0])
-            dm.addData(sensor, byteString, "txt")
+                dm.addData(sensor, byteString, "txt")
                 # if(dm.status == 1):
                     # thread = Thread(target = dm.sendData, args = {sensorName + "_bin", "bin"})
                     # thread.start()
                     # thread = Thread(target = dm.sendData, args = {sensorName, "txt"})
                     # thread.start()
                     # client_socket.send(b'\xff\x00\xff\x00' + byteString[0:bitEnd])
-            print("Writing Data For: ", str(sensor.serial))
-            #except:
-            #    print("something went wrong")
+                print("Writing Data For: ", str(sensor.serial))
+            except:
+                print("something went wrong")
