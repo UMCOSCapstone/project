@@ -9,11 +9,11 @@ class Overview extends Component {
     this.state = {
       items: [
         {
-          to: "/graph",
+          to: "/graphcontainer",
           label: "item 1"
         },
         {
-          to: "/graph",
+          to: "/graphcontainer",
           label: "item 2"
         },
       ],
