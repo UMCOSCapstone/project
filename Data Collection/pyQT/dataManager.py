@@ -4,6 +4,7 @@ import datetime
 from flask_socketio import SocketIO, emit
 from flask import Flask
 from threading import Thread
+import json
 
 url = 'http://localhost:5000/send'
 dat = {}
@@ -50,12 +51,16 @@ def sendData(sensorName, dataType):
 
 
 
-def addData(sensor, value, dataType):
+def addData(sensor, data, dataType):
     print("adding data")
     # print(value[14])
 
     dateTime = datetime.datetime.now()
-    socketio.emit('newnumber', {'number': int(value), 'sensorSerial': sensor.serial, "dateTime": str(dateTime)}, namespace='/test')
+    try:
+        # print(json.dumps(data))
+        socketio.emit('newnumber', {'data': data, 'sensor': sensor.toJSON(), "dateTime": str(dateTime)}, namespace='/test')
+    except:
+        print("Socket Error occured")
     # socketio.emit('newnumber', {'number': 1}, namespace='/test')
 
     # data type txt or bin
