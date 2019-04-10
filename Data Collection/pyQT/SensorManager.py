@@ -16,6 +16,9 @@ class Sensor():
         self.port = port
         self.status = status
 
+    def toJSON(self):
+        return {"name": self.name, "baudRate": self.baudRate, "serial": self.serial, "port": self.port, "status": self.status}
+
     def __hash__(self):
         return self.serial
 

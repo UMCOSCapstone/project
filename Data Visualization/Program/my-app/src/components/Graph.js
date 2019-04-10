@@ -29,6 +29,9 @@ componentDidMount() {
 
 
   addDataPoint(data){
+
+    console.log(data)
+
     if(data.sensorSerial == this.props.match.params.sensorId){
       var newData = this.state.data.slice(0)
 
