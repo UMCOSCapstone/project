@@ -21,7 +21,9 @@ def ACS(sensor):
                 #file.write(byteString.hex())#writes incoming data to appropriate file
                 # dm.addData(files[i], str(newACS.unpack_frame(b'\xff\x00\xff\x00' + byteString[0:bitEnd])) + "\n", "txt")
                 # dm.addData(sensorName + "_bin", byteString.hex(), "bin")
-                dm.addData(sensorName, newACS.unpack_frame(b'\xff\x00\xff\x00' + byteString[0:bitEnd]), "txt")
+                dm.addData(sensor, newACS.unpack_frame(b'\xff\x00\xff\x00' + byteString[0:bitEnd]), "txt")
+                dm.sendData(sensor, "txt")
+                dm.sendData()
                 if(dm.status == 1):
                     # thread = Thread(target = dm.sendData, args = {sensorName + "_bin", "bin"})
                     # thread.start()
