@@ -120,6 +120,7 @@ class DataCollector():
                     jsonData = {"frame_len": unpacked.frame_len, "frame_type": unpacked.frame_type, "serial_number": unpacked.serial_number, "a_ref_dark": unpacked.a_ref_dark, "p": unpacked.p, "a_sig_dark": unpacked.a_sig_dark, "t_ext": unpacked.t_ext, "t_int": unpacked.t_int, "c_ref_dark": unpacked.c_ref_dark, "c_sig_dark": unpacked.c_sig_dark, "time_stamp": unpacked.time_stamp, "output_wavelength": unpacked.output_wavelength, "c_ref": unpacked.c_ref.tolist(), "a_ref": unpacked.a_ref.tolist(), "c_sig": unpacked.c_sig.tolist(), "a_sig": unpacked.a_sig.tolist()}
 
                     dm.addData(sensor, jsonData, "txt")
+                    dm.sendData(sensor, "txt")
                     FileManager.addData(sensor, str(unpacked) + "\n")
                     # FileManager.addData(sensor, "this is a test\n")
                     # if(dm.status == 1):
@@ -164,6 +165,7 @@ class DataCollector():
                 # dm.addData(sensor.name + "_bin", byteString.hex(), "bin")
                 # print(newACS.unpack_frame(b'\xff\x00\xff\x00' + byteString[0:bitEnd]).c_ref[0])
                 dm.addData(sensor, byteString, "txt")
+                dm.sendData(sensor, byteString, "txt")
                 # if(dm.status == 1):
                     # thread = Thread(target = dm.sendData, args = {sensorName + "_bin", "bin"})
                     # thread.start()

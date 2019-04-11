@@ -7,26 +7,24 @@ import json
 @app.route('/send', methods=['POST'])
 def send():
 
-    app.logger.info("test")
+    sensor = request.json
 
-    sensors = request.json
+    name = sensor["name"]
+    data = sensor["data"]
 
-    for sensor in sensors:
-        name = sensor["name"]
-        data = sensor["data"]
+    try:
+        with open(name + ".txt", "a") as file:
 
-        try:
-            with open(name + ".txt", "a") as file:
+            for values in data:
+                print(values)
+                file.write(str(values) + os.linesep)
 
-                for values in data:
-                    file.write(values["value"] + os.linesep)
+            # file.close()
+            print("closing: " + name + ".txt")
 
-                file.close()
-                app.logger.info("closing: " + name + ".txt")
-
-        except IOError as e:
-            app.logger.info("Couldn't open or write to file (%s)." % e)
-            abort(500)
+    except IOError as e:
+        print("Couldn't open or write to file (%s)." % e)
+        abort(500)
 
 
     return "{success: true}"

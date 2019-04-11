@@ -5,6 +5,7 @@ from flask_socketio import SocketIO, emit
 from flask import Flask
 from threading import Thread
 import json
+import SensorManager as sm
 
 url = 'http://localhost:5000/send'
 dat = {}
@@ -34,19 +35,16 @@ thread.start()
 def sendData(sensor, dataType):
     print("Calling: sendData()")
 
-    jsonData = {"name": sensor.name, "serialNumber": str(sensor.serialNumber), "dataType": "bin", "data": dat[sensor.name]}
+    jsonData = {"name": sensor.name, "serialNumber": sensor.serial, "dataType": "bin", "data": dat[sensor.name]}
 
     headers = {'content-type': 'application/json'}
     response = requests.post(url, data=json.dumps(jsonData), headers=headers)
 
     if(response.status_code == requests.codes.ok):
-        # clear data
         dat[sensor.name].clear()
         print("Successfully Sent Data")
     else:
         print("Error Submitting")
-    # else:
-    #     print("not here")
 
 
 
@@ -59,16 +57,16 @@ def addData(sensor, data, dataType):
     try:
         # print(json.dumps(data))
         socketio.emit('newnumber', {'data': data, 'sensor': sensor.toJSON(), "dateTime": str(dateTime)}, namespace='/test')
-    
-        found = False
-                
-        if not (sensor.name in dat):
-            dat[sensor.name] = []
-                        
-        dat[sensor.name].append({"value": data, "time": str(dateTime)})
-            
+
     except:
         print("Socket Error occured")
+
+    found = False
+
+    if not (sensor.name in dat):
+        dat[sensor.name] = []
+
+    dat[sensor.name].append({"value": data, "time": str(dateTime)})
 
 
     # Write to file
