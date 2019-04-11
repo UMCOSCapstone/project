@@ -31,17 +31,17 @@ def initSocket():
 thread = Thread(target = initSocket)
 thread.start()
 
-def sendData(sensorName, dataType):
+def sendData(sensor, dataType):
     print("Calling: sendData()")
 
-    jsonData = {"name": sensorName, "serialNumber": "1234", "dataType": "bin", "data": dat[sensorName]}
+    jsonData = {"name": sensor.name, "serialNumber": str(sensor.serialNumber), "dataType": "bin", "data": dat[sensor.name]}
 
     headers = {'content-type': 'application/json'}
     response = requests.post(url, data=json.dumps(jsonData), headers=headers)
 
     if(response.status_code == requests.codes.ok):
         # clear data
-        dat[sensorName].clear()
+        dat[sensor.name].clear()
         print("Successfully Sent Data")
     else:
         print("Error Submitting")
@@ -59,27 +59,17 @@ def addData(sensor, data, dataType):
     try:
         # print(json.dumps(data))
         socketio.emit('newnumber', {'data': data, 'sensor': sensor.toJSON(), "dateTime": str(dateTime)}, namespace='/test')
+    
+        found = False
+                
+        if not (sensor.name in dat):
+            dat[sensor.name] = []
+                        
+        dat[sensor.name].append({"value": data, "time": str(dateTime)})
+            
     except:
         print("Socket Error occured")
-    # socketio.emit('newnumber', {'number': 1}, namespace='/test')
 
-    # data type txt or bin
-
-    # START OF COMMENT OUT
-
-    # print("Calling: addData()")
-    #
-    #
-    # found = False
-    #
-    # if not (sensorName in dat):
-    #     dat[sensorName] = []
-    #
-    # dat[sensorName].append({"value": value, "time": str(dateTime)})
-    #
-    # open(sensorName + "." + dataType, "a").write(value)
-
-    # END OF COMMENT OUT
 
     # Write to file
     # writes incoming data to appropriate file
