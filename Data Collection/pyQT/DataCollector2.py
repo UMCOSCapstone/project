@@ -105,12 +105,21 @@ class DataCollector():
         newACS = acs.ACS("acs301.dev")
         byteString = b""#keeps track of all bytes in current frame
         while(self.flags[sensor.serial]):
-            byteString += serialPort.readline()#read incoming bytes
+            try:
+                byteString += serialPort.readline()#read incoming bytes
+            except:
+                try:
+                    serialPort.close()
+                    serialPort = serial.Serial()
+                    serialPort.baudrate = sensor.baudRate # 115200
+                    serialPort.port = sensor.port # "/dev/cu.usbmodem14101"#
+                    self.serialPorts[sensor.serial] = serialPort
+                    serialPort.open()
+                except:
+                   print("Error: could not connect to sensor") 
             bitEnd = byteString.find(b'\xff\x00\xff\x00')#checks for beginning of next frame
             if not (bitEnd == -1):
                 try:
-
-
                     # print(str(newACS.unpack_frame(b'\xff\x00\xff\x00' + byteString[0:bitEnd]))+ "\n")
                     # dm.addData(sensor.name + "_bin", byteString.hex(), "bin")
                     # print(newACS.unpack_frame(b'\xff\x00\xff\x00' + byteString[0:bitEnd]).c_ref[0])
@@ -129,7 +138,7 @@ class DataCollector():
                         # thread = Thread(target = dm.sendData, args = {sensorName, "txt"})
                         # thread.start()
                         # client_socket.send(b'\xff\x00\xff\x00' + byteString[0:bitEnd])
-                    print("Writing Data For: ", str(sensor.serial))
+                    #print("Writing Data For: ", str(sensor.serial))
                 except:
                     print("something went wrong")
                 byteString = byteString[bitEnd + 4:]#deletes old frame
@@ -156,8 +165,18 @@ class DataCollector():
         #file = open(files[i] + "Bytes.txt", "a")
         #decodedFile = open(files[i] + ".txt", "a")
         while(self.flags[sensor.serial]):
-            byteString = str(serialPort.readline())[1:-5].split("\\t")[2:]#read incoming bytes
-            print(byteString)
+            try:
+                byteString = str(serialPort.readline())[1:-5].split("\\t")[2:]#read incoming bytes
+            except:
+                try:
+                    serialPort.close()
+                    serialPort = serial.Serial()
+                    serialPort.baudrate = sensor.baudRate # 115200
+                    serialPort.port = sensor.port # "/dev/cu.usbmodem14101"#
+                    self.serialPorts[sensor.serial] = serialPort
+                    serialPort.open()
+                except:
+                   print("Error: could not connect to sensor") 
             #for i in byteString:
             #    print(i + "test,")
             try:
