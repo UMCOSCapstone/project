@@ -4,6 +4,10 @@ from flask import request, jsonify
 import configparser
 import json
 
+@app.route("/ping", methods=['GET'])
+def ping():
+    return "Hello World!"
+
 @app.route('/send', methods=['POST'])
 def send():
 
