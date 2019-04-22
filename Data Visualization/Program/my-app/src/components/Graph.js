@@ -26,7 +26,7 @@ class Graph extends Component {
 componentDidMount() {
 
   // parse jsonData and set this.state.jsonData to the formated version of the jsonData
-  
+  var jsonObj = JSON.parse(this.state.jsonData);
 
   console.log(jsonData)
 
@@ -35,11 +35,6 @@ componentDidMount() {
     const socket = socketIOClient("http://localhost:5001/test");
     socket.on("newnumber", data => this.addDataPoint(data));
   }
-
-
-  handleChange(event) {
-    this.setState({value: event.target.value});
-    }
 
   addDataPoint(data){
 
