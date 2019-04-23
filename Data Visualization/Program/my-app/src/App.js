@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import Header from './components/Header.js'
 import Overview from './pages/Overview.js'
-import Process from './pages/Process.js'
-import Status from './pages/Status.js'
+// import Process from './pages/Process.js'
+// import Status from './pages/Status.js'
 import Graph from './components/Graph.js'
 import Helmet from 'react-helmet'
 import { BrowserRouter, Route, Redirect } from 'react-router-dom';
