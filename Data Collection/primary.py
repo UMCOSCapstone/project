@@ -25,7 +25,7 @@ class SideBar(QDialog):
         #Layout of Container Widget
         self.layout = QVBoxLayout(self)
 
-        self.initLayout()
+        self.updateLayout()
 
         self.layout.setContentsMargins(0,0,0,0)
 
@@ -52,10 +52,6 @@ class SideBar(QDialog):
         self.setLayout(vLayout)
 
     def initLayout(self):
-        print("Hi")
-        for i in reversed(range(self.layout.count())):
-            self.layout.itemAt(i).widget().setParent(None)
-
         for sensor in sensorManager.get():
 
             self.deviceButton = QPushButton("Device: " + sensor.name + "\nStatus: " + sensor.status)
@@ -63,7 +59,14 @@ class SideBar(QDialog):
             self.layout.addWidget(self.deviceButton)
 
     def updateLayout(self):
-        print("Hi")
+        for i in reversed(range(self.layout.count())):
+            self.layout.itemAt(i).widget().deleteLater()
+
+        for sensor in sensorManager.get():
+
+            self.deviceButton = QPushButton("Device: " + sensor.name + "\nStatus: " + sensor.status)
+            self.deviceButton.clicked.connect(partial(self.sensorSelected, sensor))
+            self.layout.addWidget(self.deviceButton)
 
 
 
@@ -73,6 +76,7 @@ class SideBar(QDialog):
 
     def addSensor(self):
         self.addNewSensor()
+        self.updateLayout()
 
 class TabBar(QDialog):
     def __init__(self, parent=None):

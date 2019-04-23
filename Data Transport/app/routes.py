@@ -3,17 +3,15 @@ import os
 from flask import request, jsonify
 import configparser
 import json
-import datetime
+from datetime import datetime
 
 config = configparser.ConfigParser()
 config.read('config.ini')
 fileDirectory = config['DEFAULT']['fileDirectory']
 
-def addData(self, sensor, data):
+def addData(sensor, data):
 
-    date = datetime.datetime.now()
-
-    print(data.dateTime)
+    date = datetime.strptime(data["time"], '%Y-%m-%d %H:%M:%S.%f')
 
     currentDirectory = fileDirectory + str(date.year) + "_" + str(date.month) + "_" + str(date.day) + "_" + str(date.hour) + "00"
 
@@ -24,10 +22,12 @@ def addData(self, sensor, data):
         except:
             print("Cannot make directory")
 
-    file = currentDirectory + "/" + sensor.name + "_" + str(sensor.serial) + ".txt"
+    file = currentDirectory + "/" + sensor["name"] + "_" + sensor["serial"] + ".txt"
 
     f = open(file, "a")
-    f.write(data)
+    f.write(str(data["value"]) + "\n")
+
+    return "{error: false}"
 
 @app.route("/ping", methods=['GET'])
 def ping():
@@ -36,26 +36,12 @@ def ping():
 @app.route('/send', methods=['POST'])
 def send():
 
-    sensor = request.json
+    req = request.json
 
-    name = sensor["name"]
-    data = sensor["data"]
+    data = req["data"]
 
-    try:
-        with open(name + ".txt", "a") as file:
-
-            for values in data:
-                print(values)
-                file.write(str(values) + os.linesep)
-                addData({"name": "hi", "serial": 1}, values)
-
-            # file.close()
-            print("closing: " + name + ".txt")
-
-    except IOError as e:
-        print("Couldn't open or write to file (%s)." % e)
-        abort(500)
-
+    for values in data:
+        addData({"name": req["name"], "serial": req["serialNumber"]}, values)
 
     return "{success: true}"
 

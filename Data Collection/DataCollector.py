@@ -24,9 +24,6 @@ class DataCollector():
             sensor.status = "off"
             sensorManager.update(sensor)
 
-
-
-
     def start(self, sensor):
         print("Start Data Collection")
         sensor.status = "on"
