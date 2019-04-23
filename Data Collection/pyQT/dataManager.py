@@ -7,7 +7,7 @@ from threading import Thread
 import json
 import SensorManager as sm
 
-url = 'http://localhost:5000/send'
+url = 'http://141.114.192.65:5000/send'
 dat = {}
 
 status = 1
