@@ -6,8 +6,8 @@ from flask import Flask
 from threading import Thread
 import json
 import SensorManager as sm
+import configparser
 
-url = 'http://localhost:5000/send'
 dat = {}
 
 status = 1
@@ -27,26 +27,34 @@ def initSocket():
     def test_disconnect():
         print('Client disconnected')
 
-    socketio.run(app, host="localhost", port=5001)
+    try:
+        socketio.run(app, host="localhost", port=5001)
+    except:
+        print("Error: problem with socketio")
 
 thread = Thread(target = initSocket)
 thread.start()
 
 def sendData(sensor, dataType):
-    print("Calling: sendData()")
 
-    jsonData = {"name": sensor.name, "serialNumber": sensor.serial, "dataType": "bin", "data": dat[sensor.name]}
+    config = configparser.ConfigParser()
+    config.read('config.ini')
 
-    headers = {'content-type': 'application/json'}
-    response = requests.post(url, data=json.dumps(jsonData), headers=headers)
+    try:
+        url = config['DEFAULT']['secondaryaddress']
 
-    if(response.status_code == requests.codes.ok):
-        dat[sensor.name].clear()
-        print("Successfully Sent Data")
-    else:
-        print("Error Submitting")
+        jsonData = {"name": sensor.name, "serialNumber": sensor.serial, "dataType": "bin", "data": dat[sensor.name]}
+        headers = {'content-type': 'application/json'}
 
+        response = requests.post("http://" + url + "/send", data=json.dumps(jsonData), headers=headers)
 
+        if(response.status_code == requests.codes.ok):
+            dat[sensor.name].clear()
+            print("Successfully Sent Data")
+        else:
+            print("Error Submitting")
+    except:
+        print("Error: Could not reach server")
 
 
 def addData(sensor, data, dataType):

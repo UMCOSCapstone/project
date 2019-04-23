@@ -3,7 +3,10 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QColor
 from SensorManager import Sensor, SensorManager
 from functools import partial
-from DataCollector2 import DataCollector
+import configparser
+import json
+from DataCollector import DataCollector
+import random
 
 sensorManager = SensorManager()
 dataCollector = DataCollector()
@@ -20,19 +23,13 @@ class SideBar(QDialog):
         #Container Widget
         widget = QWidget()
         #Layout of Container Widget
-        layout = QVBoxLayout(self)
+        self.layout = QVBoxLayout(self)
 
-        layout.setContentsMargins(0,0,0,0)
+        self.initLayout()
 
-        for sensor in sensorManager.get():
+        self.layout.setContentsMargins(0,0,0,0)
 
-            self.deviceButton = QPushButton("Device: " + sensor.name + "\nStatus: " + sensor.status)
-
-            self.deviceButton.clicked.connect(partial(self.sensorSelected, sensor))
-
-            layout.addWidget(self.deviceButton)
-
-        widget.setLayout(layout)
+        widget.setLayout(self.layout)
 
         #Scroll Area Properties
         scroll = QScrollArea()
@@ -53,6 +50,23 @@ class SideBar(QDialog):
         vLayout.setContentsMargins(0, 0, 0, 0)
 
         self.setLayout(vLayout)
+
+    def initLayout(self):
+        print("Hi")
+        for i in reversed(range(self.layout.count())):
+            self.layout.itemAt(i).widget().setParent(None)
+
+        for sensor in sensorManager.get():
+
+            self.deviceButton = QPushButton("Device: " + sensor.name + "\nStatus: " + sensor.status)
+            self.deviceButton.clicked.connect(partial(self.sensorSelected, sensor))
+            self.layout.addWidget(self.deviceButton)
+
+    def updateLayout(self):
+        print("Hi")
+
+
+
 
     def sensorSelected(self, sensor):
         self.onClick(sensor)
@@ -109,7 +123,9 @@ class ContentMenu(QDialog):
 
         self.isNew = False
 
-        self.selectedSensor = Sensor("","","","","")
+        self.selectedSensor = Sensor("","","","","", 1)
+
+        self.updateLayout = None
 
         self.uiSetup()
 
@@ -127,6 +143,8 @@ class ContentMenu(QDialog):
 
         self.sensorSerialLabel = QLabel("Serial Number")
         self.sensorSerialTextBox = QLineEdit()
+
+        self.sensorSerialTextBox.editingFinished.connect(self.updateSensor)
 
         gridLayout.addWidget(self.sensorSerialLabel)
         gridLayout.addWidget(self.sensorSerialTextBox)
@@ -170,16 +188,13 @@ class ContentMenu(QDialog):
     def updateSensor(self):
         self.selectedSensor.name = self.sensorNameTextBox.text()
         self.selectedSensor.port = self.sensorPortTextBox.text()
-
-        if(self.isNew):
-            self.selectedSensor.serial = self.sensorSerialTextBox.text()
-
+        self.selectedSensor.serial = self.sensorSerialTextBox.text()
         self.selectedSensor.baudRate = int(self.sensorBaudRateTextBox.text())
 
         sensorManager.update(self.selectedSensor)
+        self.updateLayout()
 
     def setCurrentSensor(self, sensor):
-        self.isNew = False
 
         self.selectedSensor = sensor
 
@@ -187,9 +202,6 @@ class ContentMenu(QDialog):
         self.sensorSerialTextBox.setText(str(self.selectedSensor.serial))
         self.sensorPortTextBox.setText(self.selectedSensor.port)
         self.sensorBaudRateTextBox.setText(str(self.selectedSensor.baudRate))
-
-        self.dataCollectionButton.setVisible(True)
-
         if(self.selectedSensor.status == "on"):
             self.dataCollectionButton.setText("Stop Data Collection")
         else:
@@ -204,9 +216,10 @@ class ContentMenu(QDialog):
             dataCollector.stop(self.selectedSensor)
             self.selectedSensor.status = "off"
             self.dataCollectionButton.setText("Start Data Collection")
+        self.updateLayout()
 
     def addNewSensor(self):
-        newSensor = Sensor("New Sensor", 0, 0, "/", "off")
+        newSensor = Sensor("New Sensor", 0, 0, "/", "off", random.randint(0, 100000))
         sensorManager.add(newSensor)
         self.isNew = True
 
@@ -216,7 +229,7 @@ class ContentMenu(QDialog):
         self.sensorPortTextBox.setText(self.selectedSensor.port)
         self.sensorBaudRateTextBox.setText(str(self.selectedSensor.baudRate))
 
-        self.dataCollectionButton.setVisible(False)
+        self.dataCollectionButton.setVisible(True)
 
 class OptionsMenu(QDialog):
     def __init__(self, parent=None):
@@ -228,11 +241,29 @@ class OptionsMenu(QDialog):
 
         layout = QFormLayout()
 
-        layout.addRow(QLabel("Secondary Computer Address"), QLineEdit("localhost:8080"))
-        layout.addRow(QLabel("File Storage Directory"), QLineEdit("/var/backup/external"))
+        config = configparser.ConfigParser()
+        config.read('config.ini')
+
+        filedirectory = config['DEFAULT']['filedirectory']
+        address = config['DEFAULT']['Secondaryaddress']
+
+        self.addressTextField = QLineEdit(address)
+        self.directoryTextField = QLineEdit(filedirectory)
+
+        self.addressTextField.textChanged.connect(self.setPrefs)
+        self.directoryTextField.textChanged.connect(self.setPrefs)
+
+        layout.addRow(QLabel("Secondary Computer Address"), self.addressTextField)
+        layout.addRow(QLabel("File Storage Directory"), self.directoryTextField)
 
         self.setLayout(layout)
 
+    def setPrefs(self):
+        config = configparser.ConfigParser()
+        config.read('config.ini')
+        config.set('DEFAULT', 'filedirectory', self.directoryTextField.text())
+        config.set('DEFAULT', 'Secondaryaddress', self.addressTextField.text())
+        config.write(open("config.ini", "w"))
 
 
 
@@ -308,6 +339,8 @@ class ContainerWindow(QDialog):
         self.sb.onClick = self.cm.setCurrentSensor
         self.sb.addNewSensor = self.cm.addNewSensor
 
+        self.cm.updateLayout = self.sb.updateLayout
+
         subLayout.addWidget(self.sb)
         subLayout.addWidget(self.cm)
 
@@ -339,6 +372,7 @@ class ContainerWindow(QDialog):
         mainLayout.addWidget(self.stacked)
 
         mainLayout.setContentsMargins(0,0,0,0)
+
 
         self.setLayout(mainLayout)
 

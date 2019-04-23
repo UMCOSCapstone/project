@@ -1,8 +1,33 @@
-from app import app
+from app import app, ServerFileManager
 import os
 from flask import request, jsonify
 import configparser
 import json
+import datetime
+
+config = configparser.ConfigParser()
+config.read('config.ini')
+fileDirectory = config['DEFAULT']['fileDirectory']
+
+def addData(self, sensor, data):
+
+    date = datetime.datetime.now()
+
+    print(data.dateTime)
+
+    currentDirectory = fileDirectory + str(date.year) + "_" + str(date.month) + "_" + str(date.day) + "_" + str(date.hour) + "00"
+
+    if(not os.path.isdir(currentDirectory)):
+        try:
+            os.mkdir(currentDirectory, 0o775)
+
+        except:
+            print("Cannot make directory")
+
+    file = currentDirectory + "/" + sensor.name + "_" + str(sensor.serial) + ".txt"
+
+    f = open(file, "a")
+    f.write(data)
 
 @app.route("/ping", methods=['GET'])
 def ping():
@@ -22,6 +47,7 @@ def send():
             for values in data:
                 print(values)
                 file.write(str(values) + os.linesep)
+                addData({"name": "hi", "serial": 1}, values)
 
             # file.close()
             print("closing: " + name + ".txt")
@@ -36,13 +62,10 @@ def send():
 @app.route('/updateSensors', methods=['POST'])
 def updateSensors():
 
-    jsonSensors = request.json["sensors"]
-
-    # print(jsonSensors)
-
     config = configparser.ConfigParser()
-    config.set('DEFAULT', 'sensors', json.dumps(jsonSensors, indent=4))
-    print(config.write(open("config.ini", "w")))
+    config.read('config.ini')
+    config.set('DEFAULT', 'sensors', request.json)
+    config.write(open("config.ini", "w"))
 
     return json.dumps({"error": False})
 
