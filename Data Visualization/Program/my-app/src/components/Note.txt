@@ -1,0 +1,7 @@
+The following files are no longer needed, but kept for just in case: 
+  1. GraphContainer.js
+  2. GraphContainer.css
+  3. SidePanel.js
+  4. SidePanel.css
+  
+Everything is integrated into Graph.js and Graph.css
