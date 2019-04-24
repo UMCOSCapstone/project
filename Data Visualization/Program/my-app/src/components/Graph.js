@@ -5,8 +5,10 @@ import {
   HighchartsChart, Chart, withHighcharts, XAxis, YAxis, Title, Legend, LineSeries
 } from 'react-jsx-highcharts';
 import './Graph.css'
+//import jsonData from '../jsonData.json';
 
 var jsonData = require('../jsonData.json')
+
 
 class Graph extends Component {
 
@@ -14,21 +16,45 @@ class Graph extends Component {
     super(props);
     this.addDataPoint = this.addDataPoint.bind(this);
     this.handleChange = this.handleChange.bind(this);
+    this.onDropdown = this.onDropdown.bind(this);
 
     const now = Date.now();
-
-    this.state = {
+    this.state = {                                    
         data: [],
-        jsonData: [1,2,3,4]
+        jsonData: [1,2,3,4], 
+        index: 0
     }
 }
 
 componentDidMount() {
 
-  // parse jsonData and set this.state.jsonData to the formated version of the jsonData
-  var jsonObj = JSON.parse(this.state.jsonData);
 
-  console.log(jsonData)
+   var testData = []
+
+
+    //parse jsonData and set this.state.jsonData to the formated version of the jsonData
+    var data = jsonData.data;
+
+    var parsedjsonData = []
+    for(var i=0; i < data.length; i++){
+      for(var j=0; j < data[i].data.length; j++){
+        console.log(data[i].data[j])
+
+        if(parsedjsonData[j] === undefined){
+          parsedjsonData[j] = []
+        }
+
+        parsedjsonData[j][i] = data[i].data[j]
+        
+      }
+    }  
+
+    console.log(parsedjsonData);
+
+    this.setState({
+      jsonData: parsedjsonData
+    })
+
 
     var sensorSerial = this.props.match.params.sensorId
 
@@ -40,11 +66,12 @@ componentDidMount() {
 
     console.log(data)
 
-    if(data.sensorSerial == this.props.match.params.sensorId){
+    if(data.sensorSerial === this.props.match.params.sensorId){
       var newData = this.state.data.slice(0)
 
       console.log(new Date(data.dateTime.split(' ').join('T')))
       //console.log(data.dateTime)
+      
       newData.push([new Date(data.dateTime.split(' ').join('T')), data.number])
 
       // if(newData.length > 50){
@@ -54,6 +81,7 @@ componentDidMount() {
       this.setState({
         data: newData
       })
+
     }
   }
 
@@ -61,6 +89,17 @@ componentDidMount() {
     this.setState({value: event.target.value});
   }
 
+  multipleSelect(){
+    let items = [];
+    for(var i=0; i <= this.state.jsonData.length;i++){
+      items.push(<option key={i} value={i}>{i}</option>);
+    }
+    return items;
+  }
+
+  onDropdown(e){
+    this.setState({index: e.target.value});
+  }
 
   render() {
 
@@ -69,7 +108,7 @@ componentDidMount() {
     var data = this.state.data
 
     if(this.state.value === 'processed'){
-      var data = this.state.jsonData
+      var data = this.state.jsonData[this.state.index]
     }
 
     const plotOptions = {
@@ -123,7 +162,6 @@ componentDidMount() {
                   <h4>Options</h4>
                     <select value={this.state.value} onChange={this.handleChange}>
                       <option value="live">Live</option>
-                      <option value="raw">Raw</option>
                       <option value="processed">Processed</option>
                     </select>
                 </label>
@@ -132,23 +170,12 @@ componentDidMount() {
               <form>
                 <label>
                   <h4>Channel</h4>
-                    <select value={this.state.value} onChange={this.handleChange}>
-                      <option value="20">20</option>
-                      <option value="40">40</option>
-                      <option value="80">80</option>
+                    <select type="select" onChange={this.onDropdown}>
+                      {this.multipleSelect()}
                     </select>
                 </label>
               </form>
 
-              <form>
-                <label>
-                  <h4>Graph View</h4>
-                    <select value={this.state.value} onChange={this.handleChange}>
-                      <option value="map">Map</option>
-                      <option value="timeseries">Time Series</option>
-                    </select>
-                </label>
-              </form>
           </div> 
         </div>
       </div>
