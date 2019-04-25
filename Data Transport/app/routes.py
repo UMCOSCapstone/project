@@ -1,4 +1,4 @@
-from app import app, ServerFileManager
+from app import app
 import os
 from flask import request, jsonify
 import configparser

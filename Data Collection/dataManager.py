@@ -28,7 +28,7 @@ def initSocket():
         print('Client disconnected')
 
     try:
-        socketio.run(app, host="localhost", port=5001)
+        socketio.run(app, host=localhost, port=5001)
     except:
         print("Error: problem with socketio")
 
