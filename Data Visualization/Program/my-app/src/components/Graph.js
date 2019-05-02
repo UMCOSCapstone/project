@@ -19,9 +19,9 @@ class Graph extends Component {
     this.onDropdown = this.onDropdown.bind(this);
 
     const now = Date.now();
-    this.state = {                                    
+    this.state = {
         data: [],
-        jsonData: [1,2,3,4], 
+        jsonData: [1,2,3,4],
         index: 0
     }
 }
@@ -45,9 +45,9 @@ componentDidMount() {
         }
 
         parsedjsonData[j][i] = data[i].data[j]
-        
+
       }
-    }  
+    }
 
     console.log(parsedjsonData);
 
@@ -66,17 +66,13 @@ componentDidMount() {
 
     console.log(data)
 
-    if(data.sensorSerial === this.props.match.params.sensorId){
+
+
+    if(data.sensor.serial === this.props.match.params.sensorId){
       var newData = this.state.data.slice(0)
-
-      console.log(new Date(data.dateTime.split(' ').join('T')))
       //console.log(data.dateTime)
-      
-      newData.push([new Date(data.dateTime.split(' ').join('T')), data.number])
 
-      // if(newData.length > 50){
-      //   newData.shift()
-      // }
+      newData.push(data.data.data.sig[0][this.state.index])
 
       this.setState({
         data: newData
@@ -90,6 +86,7 @@ componentDidMount() {
   }
 
   multipleSelect(){
+
     let items = [];
     for(var i=0; i <= this.state.jsonData.length;i++){
       items.push(<option key={i} value={i}>{i}</option>);
@@ -98,6 +95,10 @@ componentDidMount() {
   }
 
   onDropdown(e){
+    this.setState({
+      data: []
+    })
+
     this.setState({index: e.target.value});
   }
 
@@ -111,6 +112,9 @@ componentDidMount() {
       var data = this.state.jsonData[this.state.index]
     }
 
+    console.log("data")
+    console.log(data)
+
     const plotOptions = {
       series: {
         pointStart: new Date("2019-04-04T10:55:08.841287Z")
@@ -118,7 +122,7 @@ componentDidMount() {
     }
 
     return (
-      
+
       <div className="container">
 
         <div className="graph">
@@ -144,15 +148,14 @@ componentDidMount() {
         </div>
 
 
-    <div className="side">  
+    <div className="side">
       <div className="SideContainer">
 
           <div className="upSide">
               <h4>Information</h4>
                   <ul>
-                      <li>Device:  <b>Light Absorbtion</b></li>
-                      <li>Status:  <b>Connected</b></li>
-                      <li>Packets: <b>1021/1220</b></li>
+                      <li>Device: <b>ACS</b></li>
+                      <li>Status: <b>Connected</b></li>
                   </ul>
           </div>
 
@@ -176,7 +179,7 @@ componentDidMount() {
                 </label>
               </form>
 
-          </div> 
+          </div>
         </div>
       </div>
 

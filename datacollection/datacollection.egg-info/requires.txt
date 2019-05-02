@@ -1,0 +1,15 @@
+PyQt5
+functools
+configparser
+json
+random
+requests
+serial
+datetime
+os
+glob
+threading
+time
+socket
+flask_socketio
+flask

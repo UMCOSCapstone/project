@@ -1,0 +1,14 @@
+setup.py
+datacollection/DataCollector.py
+datacollection/FileManager.py
+datacollection/SensorManager.py
+datacollection/__init__.py
+datacollection/dataManager.py
+datacollection/portFinder.py
+datacollection/primary.py
+datacollection.egg-info/PKG-INFO
+datacollection.egg-info/SOURCES.txt
+datacollection.egg-info/dependency_links.txt
+datacollection.egg-info/not-zip-safe
+datacollection.egg-info/requires.txt
+datacollection.egg-info/top_level.txt
